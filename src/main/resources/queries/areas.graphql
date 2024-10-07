@@ -1,0 +1,15 @@
+query areasQuery {
+  areas {
+    nodes {
+      id
+      name
+      world
+      minY
+      maxY
+      points {
+        x,
+        z
+      }
+    }
+  }
+}

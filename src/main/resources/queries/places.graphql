@@ -1,0 +1,14 @@
+query placesQuery {
+  places {
+    nodes {
+      id
+      name
+      pos {
+        x,
+        y,
+        z,
+        world
+      }
+    }
+  }
+}

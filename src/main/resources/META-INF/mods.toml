@@ -1,0 +1,33 @@
+modLoader="kotlinforforge"
+loaderVersion="[4.10,)"
+license = "https://github.com/${repository}/blob/main/LICENSE.txt"
+issueTrackerURL = "https://github.com/${repository}/issues"
+
+[[mods]]
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+authors = "${mod_author}"
+description = '''exposes and consumes messages from the atheneum backend'''
+updateJSONURL = "https://api.modrinth.com/updates/atheneum-connector/forge_updates.json"
+
+[[dependencies.${mod_id}]]
+    modId = "forge"
+    mandatory = true
+    versionRange = "[4,)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.${mod_id}]]
+    modId = "minecraft"
+    mandatory = true
+    versionRange = "[1.20.1,)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="kotlinforforge"
+    mandatory=true
+    versionRange="[4.3.0,)"
+    ordering="NONE"
+    side="BOTH"

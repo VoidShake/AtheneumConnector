@@ -58,7 +58,7 @@ dependencies {
 
 graphql {
     client {
-        endpoint = "http://localhost:8080/api/graphql"
+        endpoint = env["GRAPHQL_ENDPOINT"] ?: "https://atlas.dev.macarena.ceo/api/graphql"
         packageName = "com.possible_triangle.atheneum_connector.generated"
         serializer = GraphQLSerializer.KOTLINX
     }

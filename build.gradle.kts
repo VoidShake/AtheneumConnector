@@ -10,7 +10,7 @@ val kotlin_forge_version: String by extra
 
 plugins {
     idea
-    id("com.possible-triangle.gradle") version ("0.1.5")
+    id("com.possible-triangle.gradle") version ("0.2.5")
     id("com.expediagroup.graphql") version ("8.1.0")
 }
 

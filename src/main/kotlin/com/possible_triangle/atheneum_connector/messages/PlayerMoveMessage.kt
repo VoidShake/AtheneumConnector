@@ -1,6 +1,6 @@
 package com.possible_triangle.atheneum_connector.messages
 
-import com.possible_triangle.atheneum_connector.generated.areas.Point
+import com.possible_triangle.atheneum_connector.generated.placesquery.Point
 import kotlinx.serialization.Serializable
 import net.minecraft.world.entity.player.Player
 

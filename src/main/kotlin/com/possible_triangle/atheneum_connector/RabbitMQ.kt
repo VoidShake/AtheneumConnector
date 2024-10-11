@@ -1,7 +1,7 @@
 package com.possible_triangle.atheneum_connector
 
-import com.possible_triangle.atheneum_connector.messages.ServerStatus
-import com.possible_triangle.atheneum_connector.messages.ServerStatusMessage
+import com.possible_triangle.atheneum.messages.ServerStatus
+import com.possible_triangle.atheneum.messages.ServerStatusMessage
 import com.rabbitmq.client.*
 import io.ktor.util.logging.*
 import kotlinx.serialization.InternalSerializationApi
@@ -64,6 +64,7 @@ object RabbitMQ : RecoveryListener, ShutdownListener {
     }
 
     override fun shutdownCompleted(exception: ShutdownSignalException) {
+        if(exception.isInitiatedByApplication) return
         AtheneumConnector.LOG.warn("RabbitMQ has shutdown, reconnecting... ({})", exception.message)
     }
 

@@ -1,12 +1,13 @@
 import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.graphql
 
-val mc_version: String by extra
+val dynmap_version: String by extra
 val rabbitmq_version: String by extra
 val travelers_titles_version: String by extra
 val yungs_api_version: String by extra
 val graphql_client_version: String by extra
 val kotlin_forge_version: String by extra
+val atheneum_version: String by extra
 
 plugins {
     idea
@@ -19,12 +20,14 @@ withKotlin()
 forge {
     includesLibrary("com.rabbitmq:amqp-client:$rabbitmq_version")
     includesLibrary("com.expediagroup:graphql-kotlin-ktor-client:$graphql_client_version")
+    includesLibrary("com.possible-triangle:atheneum-models:$atheneum_version")
 
     kotlinForgeVersion = null
 }
 
 repositories {
     modrinthMaven()
+    localMaven(project)
 }
 
 // required because of duplicate package export
@@ -35,6 +38,7 @@ configurations.named("minecraftLibrary") {
 dependencies {
     modImplementation("maven.modrinth:travelers-titles:${travelers_titles_version}")
     modRuntimeOnly("maven.modrinth:yungs-api:${yungs_api_version}")
+    modRuntimeOnly("maven.modrinth:dynmap:${dynmap_version}")
 
     // required because of duplicate package export by thedarkcolour:kotlinforforge:all
     implementation("thedarkcolour:kffmod:${kotlin_forge_version}")

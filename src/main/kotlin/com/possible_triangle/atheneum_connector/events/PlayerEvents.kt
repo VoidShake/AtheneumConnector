@@ -2,7 +2,8 @@ package com.possible_triangle.atheneum_connector.events
 
 import com.possible_triangle.atheneum_connector.LocationCache
 import com.possible_triangle.atheneum_connector.RabbitMQ
-import com.possible_triangle.atheneum_connector.messages.PlayerMoveMessage
+import com.possible_triangle.atheneum.messages.PlayerMoveMessage
+import com.possible_triangle.atheneum.models.Point
 import com.possible_triangle.atheneum_connector.network.DisplayTitlePaket
 import com.possible_triangle.atheneum_connector.network.Network
 import com.possible_triangle.atheneum_connector.publish
@@ -23,7 +24,13 @@ object PlayerEvents {
 
         if (level.gameTime % 20 != 0L) return
 
-        RabbitMQ.publish(PlayerMoveMessage.from(player))
+        RabbitMQ.publish(PlayerMoveMessage(
+            player.uuid,
+            Point(
+                player.level().dimension().location().path,
+                player.blockX, player.blockY, player.blockZ,
+            )
+        ))
 
         val location = LocationCache.containing(level.dimension(), player.onPos) ?: return
 

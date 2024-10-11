@@ -1,7 +1,9 @@
 package com.possible_triangle.atheneum_connector
 
-import com.possible_triangle.atheneum_connector.messages.ServerStatus
-import com.possible_triangle.atheneum_connector.messages.ServerStatusMessage
+import com.possible_triangle.atheneum.messages.ServerStatus
+import com.possible_triangle.atheneum.messages.ServerStatusMessage
+import com.possible_triangle.atheneum.createContextualJson
+import com.possible_triangle.atheneum_connector.network.Network
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonBuilder
 import net.minecraftforge.event.server.ServerStartedEvent
@@ -18,16 +20,13 @@ import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 object AtheneumConnector {
 
-    fun JsonBuilder.configure() {
-        // Nothing for now
-    }
-
-    val JSON = Json { configure() }
+    val JSON = createContextualJson()
 
     val LOG: Logger = LoggerFactory.getLogger("Atheneum Connector")
 
     init {
         Config.register()
+        Network.register()
     }
 
     @SubscribeEvent

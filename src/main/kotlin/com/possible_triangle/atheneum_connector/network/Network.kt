@@ -23,7 +23,7 @@ object Network {
         CHANNEL.send(PacketDistributor.PLAYER.with { player }, packet)
     }
 
-    init {
+    fun register() {
         CHANNEL.registerMessage(0, DisplayTitlePaket::class.java, DisplayTitlePaket::encode, DisplayTitlePaket::decode, DisplayTitlePaket::handle)
     }
 

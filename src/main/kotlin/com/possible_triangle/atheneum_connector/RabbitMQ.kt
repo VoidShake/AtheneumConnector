@@ -1,7 +1,9 @@
 package com.possible_triangle.atheneum_connector
 
-import com.rabbitmq.client.Channel
-import com.rabbitmq.client.ConnectionFactory
+import com.possible_triangle.atheneum_connector.messages.ServerStatus
+import com.possible_triangle.atheneum_connector.messages.ServerStatusMessage
+import com.rabbitmq.client.*
+import io.ktor.util.logging.*
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.serializer
 import net.minecraftforge.fml.ModList
@@ -11,18 +13,26 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberFunctions
 
-object RabbitMQ {
+object RabbitMQ : RecoveryListener, ShutdownListener {
 
     private const val EXCHANGE_KEY = "exchange"
 
     private lateinit var channel: Channel
 
-    fun connect(url: String) {
+    fun connect() {
         AtheneumConnector.LOG.info("Connecting to RabbitMQ")
 
-        val connection = ConnectionFactory().newConnection(url)
+        val connection = ConnectionFactory().newConnection(Config.SERVER.rabbitMQUrl)
+
+        connection.addShutdownListener(this)
+
+        if (connection is Recoverable) {
+            connection.addRecoveryListener(this)
+        }
 
         channel = connection.createChannel()
+        declareExchanges()
+
         val queue = channel.queueDeclare().queue
 
         val consumers = hashMapOf<String, MutableList<(ByteArray) -> Unit>>()
@@ -39,11 +49,38 @@ object RabbitMQ {
         }, { _ -> })
     }
 
-    fun close() {
+    private fun declareExchanges() {
+        channel.exchangeDeclare(EXCHANGE_KEY, "direct")
+    }
+
+    override fun handleRecovery(recoverable: Recoverable) {
+        AtheneumConnector.LOG.warn("RabbitMQ has recovered")
+        declareExchanges()
+        publish(ServerStatusMessage(ServerStatus.RECOVERED))
+    }
+
+    override fun handleRecoveryStarted(recoverable: Recoverable) {
+        AtheneumConnector.LOG.warn("Trying to reconnect to RabbitMQ...")
+    }
+
+    override fun shutdownCompleted(exception: ShutdownSignalException) {
+        AtheneumConnector.LOG.warn("RabbitMQ has shutdown, reconnecting... ({})", exception.message)
+    }
+
+    private fun tryCatching(action: () -> Unit) {
+        try {
+            action()
+        } catch (ex: ShutdownSignalException) {
+            AtheneumConnector.LOG.error("Encountered exception when publishing to RabbitMQ")
+            AtheneumConnector.LOG.error(ex)
+        }
+    }
+
+    fun close() = tryCatching {
         channel.connection.close()
     }
 
-    fun publish(routingKey: String, bytes: ByteArray) {
+    fun publish(routingKey: String, bytes: ByteArray) = tryCatching {
         channel.basicPublish(EXCHANGE_KEY, routingKey, null, bytes)
     }
 
@@ -63,9 +100,7 @@ object RabbitMQ {
                     val topic = Class.forName(messageType.toString()).simpleName
                     val deserializer = serializer(messageType)
 
-                    if (method.parameters.size != 2) {
-                        throw IllegalArgumentException("@SubscribeMessage handlers may only accept one parameter, the message itself")
-                    }
+                    require(method.parameters.size == 2) { "@SubscribeMessage handlers may only accept one parameter, the message itself" }
 
                     consume(topic) {
                         val message = AtheneumConnector.JSON.decodeFromString(deserializer, it.decodeToString())

@@ -42,18 +42,6 @@ dependencies {
     implementation("thedarkcolour:kfflib:${kotlin_forge_version}")
 
     //add("minecraftLibrary", "org.jetbrains.kotlin:kotlin-reflect:${kotlin.coreLibrariesVersion}")
-
-    /*
-    "minecraftLibrary"("com.expediagroup:graphql-kotlin-ktor-client:$graphql_client_version") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-        exclude(group = "org.jetbrains")
-    }
-
-    "jarJar"("com.expediagroup:graphql-kotlin-ktor-client:$graphql_client_version") {
-        jarJar.pin(this, "[${graphql_client_version},)")
-    }
-     */
 }
 
 graphql {

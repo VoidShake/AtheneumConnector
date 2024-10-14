@@ -2,7 +2,8 @@ import amqplib from "amqplib";
 
 const EXCHANGE = "exchange";
 
-const connection = await amqplib.connect("amqp://localhost:5672");
+const url = process.env.RABBITMQ_URL || "amqp://localhost:5672";
+const connection = await amqplib.connect(url);
 
 const channel = await connection.createChannel();
 

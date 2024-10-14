@@ -14,9 +14,9 @@ RUN cd /temp && bun install --frozen-lockfile --production
 # copy production dependencies and source code into final image
 FROM base AS release
 COPY --from=install /temp/node_modules node_modules
-COPY src src
+COPY . .
 
 # run the app
 USER bun
 EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "run", "src/app.ts" ]
+ENTRYPOINT [ "bun", "run", "app.ts" ]

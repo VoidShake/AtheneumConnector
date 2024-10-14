@@ -60,6 +60,11 @@ function step(pos: Point, uuid: string) {
 
   const dist = Math.sqrt(Math.pow(diff.x, 2) + Math.pow(diff.x, 2));
 
+  if (dist <= 1) {
+    goals.delete(uuid);
+    return;
+  }
+
   const speed = speeds.get(uuid) ?? 0.1;
 
   if (Math.random() < 0.2) {

@@ -32,16 +32,20 @@ for (let i = 0; i < MAX_PLAYERS / 2; i++) {
   addPlayer();
 }
 
+const interval = process.env.INTERVAL || "*/2 * * * * *";
+
 schedule(
-  "*/2 * * * * *",
+  interval,
   () => {
     if (players.size > 0 && Math.random() < 0.5) {
       removePlayer();
     }
 
     players.forEach((pos, key) => {
-      const dx = Math.floor(Math.random() * 4 - 2);
-      const dz = Math.floor(Math.random() * 4 - 2);
+      if (Math.random() > 0.2) return;
+
+      const dx = Math.floor(Math.random() * 24 - 12);
+      const dz = Math.floor(Math.random() * 24 - 12);
       players.set(key, { ...pos, x: pos.x + dx, z: pos.z + dz });
     });
 

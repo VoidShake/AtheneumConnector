@@ -1,11 +1,9 @@
 package com.possible_triangle.atheneum_connector
 
+import com.possible_triangle.atheneum.createContextualJson
 import com.possible_triangle.atheneum.messages.ServerStatus
 import com.possible_triangle.atheneum.messages.ServerStatusMessage
-import com.possible_triangle.atheneum.createContextualJson
 import com.possible_triangle.atheneum_connector.network.Network
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonBuilder
 import net.minecraftforge.event.server.ServerStartedEvent
 import net.minecraftforge.event.server.ServerStoppingEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent

@@ -2,6 +2,12 @@
   "name": "simulator",
   "module": "app.ts",
   "type": "module",
+  "scripts": {
+    "start": "bun src/app.ts",
+    "dev": "bun --watch app.ts",
+    "clear": "rm .cache",
+    "type-check": "tsc"
+  },
   "devDependencies": {
     "@types/amqplib": "^0.10.5",
     "@types/bun": "latest",

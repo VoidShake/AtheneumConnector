@@ -13,6 +13,8 @@ RUN cd /temp && bun install --frozen-lockfile --production
 
 # copy production dependencies and source code into final image
 FROM base AS release
+ENV NODE_ENV=production
+
 COPY --from=install /temp/node_modules node_modules
 COPY . .
 

@@ -1,0 +1,19 @@
+{
+  "name": "simulator",
+  "module": "app.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/amqplib": "^0.10.5",
+    "@types/bun": "latest",
+    "@types/node-cron": "^3.0.11",
+    "@types/uuid": "^10.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.4",
+    "node-cron": "^3.0.3",
+    "uuid": "^10.0.0"
+  }
+}

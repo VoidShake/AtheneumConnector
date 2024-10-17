@@ -31,6 +31,10 @@ repositories {
 
     maven {
         url = uri("https://maven.pkg.github.com/VoidShake/Atheneum")
+        credentials {
+            username = "someone"
+            password = env["GITHUB_TOKEN"]
+        }
         content {
             includeGroup("com.possible-triangle")
         }

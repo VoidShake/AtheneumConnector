@@ -2,9 +2,11 @@ package com.possible_triangle.atheneum_connector
 
 import com.mojang.datafixers.util.Either
 import com.possible_triangle.atheneum_connector.generated.AreasQuery
+import com.possible_triangle.atheneum_connector.generated.PlacesQuery
 import com.possible_triangle.atheneum_connector.generated.areasquery.Area
 import com.possible_triangle.atheneum_connector.generated.areasquery.FlatPoint
 import com.possible_triangle.atheneum_connector.generated.placesquery.Place
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import net.minecraft.core.BlockPos
 import net.minecraft.core.SectionPos.blockToSectionCoord
@@ -14,29 +16,55 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 
-class LocationCache<T> {
+class LocationCache<T>(private val getId: (T) -> Int) {
 
     private val lookup = hashMapOf<ResourceKey<Level>, MutableMap<ChunkPos, T>>()
     private val reverseLookup = hashMapOf<Int, Pair<ResourceKey<Level>, List<ChunkPos>>>()
 
+    fun get(level: ResourceKey<Level>, chunk: ChunkPos): T? {
+        return lookup[level]?.get(chunk)
+    }
+
+    fun set(level: ResourceKey<Level>, value: T, chunks: List<ChunkPos>) {
+        reverseLookup[getId(value)] = level to chunks
+
+        lookup.getOrPut(level, ::hashMapOf).apply {
+            chunks.forEach { put(it, value) }
+        }
+    }
+
     companion object {
-        private val AREAS = LocationCache<Area>()
+        private val AREAS = LocationCache<Area> { it.id }
+        private val PLACES = LocationCache<Place> { it.id }
 
         fun reload() {
             AREAS.clear()
+            PLACES.clear()
             initialize()
         }
 
-        fun initialize() = runBlocking {
-            val areas = GraphQL.query(AreasQuery()).areas
-            areas.nodes.forEach { area ->
-                val level = ResourceKey.create(Registries.DIMENSION, ResourceLocation(area.world))
-                val chunks = area.points.containingChunks()
-                AREAS.reverseLookup[area.id] = level to chunks
+        private fun String.levelKey() = ResourceKey.create(Registries.DIMENSION, ResourceLocation(this))
 
-                AREAS.lookup.getOrPut(level, ::hashMapOf).apply {
-                    chunks.forEach { put(it, area) }
-                }
+        private fun chunkAt(x: Int, z: Int) = ChunkPos(
+            blockToSectionCoord(x),
+            blockToSectionCoord(z),
+        )
+
+        fun initialize() = runBlocking {
+            val areasQuery = async { GraphQL.query(AreasQuery()) }
+            val placesQuery = async { GraphQL.query(PlacesQuery()) }
+
+            areasQuery.await().areas.nodes.forEach { area ->
+                val level = area.world.levelKey()
+                val chunks = area.points.containingChunks()
+                AREAS.set(level, area, chunks)
+            }
+
+            placesQuery.await().places.nodes.forEach { place ->
+                val level = place.pos.world.levelKey()
+                val chunks = listOf(chunkAt(place.pos.x, place.pos.z))
+
+                PLACES.set(level, place, chunks)
             }
         }
 
@@ -69,20 +97,17 @@ class LocationCache<T> {
                 }
 
                 odd
-            }.map {
-                ChunkPos(
-                    blockToSectionCoord(it.x),
-                    blockToSectionCoord(it.z),
-                )
-            }
+            }.map { chunkAt(it.x, it.z) }
         }
 
         fun containing(level: ResourceKey<Level>, pos: BlockPos): Either<Area, Place>? {
             val chunk = ChunkPos(pos)
 
-            val area = AREAS.lookup[level]?.get(chunk)
-
-            return area?.let { Either.left(area) }
+            return PLACES.get(level, chunk)?.let {
+                Either.right(it)
+            } ?: AREAS.get(level, chunk)?.let {
+                Either.left(it)
+            }
         }
     }
 

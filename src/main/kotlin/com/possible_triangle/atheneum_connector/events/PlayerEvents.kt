@@ -41,13 +41,13 @@ object PlayerEvents {
         val location = LocationCache.containing(level.dimension(), player.onPos) ?: return
 
         location.ifLeft {
-            Network.sendTo(player, DisplayTitlePaket(Component.literal("You entered ${it.name}"), "area-${it.id}"))
+            Network.sendTo(player, DisplayTitlePaket(Component.translatable("travelerstitles.entered_area", it.name), "area-${it.id}"))
         }
 
         location.ifRight {
             Network.sendTo(
                 player,
-                DisplayTitlePaket(Component.literal("You are close to ${it.name}"), "place-${it.id}")
+                DisplayTitlePaket(Component.translatable("travelerstitles.at_place", it.name), "place-${it.id}")
             )
         }
     }

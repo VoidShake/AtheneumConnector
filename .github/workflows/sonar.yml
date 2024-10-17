@@ -43,7 +43,7 @@ jobs:
         with:
           arguments: build sonar
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.MAVEN_TOKEN }}
+          GITHUB_ACTOR: ${{ secrets.MAVEN_TOKEN_OWNER }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

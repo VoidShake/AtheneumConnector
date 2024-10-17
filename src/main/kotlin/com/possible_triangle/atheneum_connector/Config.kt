@@ -41,7 +41,7 @@ object Config {
             builder.push("grapql")
         }
 
-        private val _graphqlUrl = builder.define("url", "http://localhost:8080/api/graphql")
+        private val _graphqlUrl = builder.define("url", "https://atlas.macarena.ceo/api/graphql")
         val graphqlUrl: URL get() = URI(_graphqlUrl.get()).toURL()
 
     }

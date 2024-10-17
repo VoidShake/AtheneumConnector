@@ -67,6 +67,10 @@ graphql {
     }
 }
 
+tasks.withType<Jar> {
+    exclude("queries")
+}
+
 enablePublishing {
     githubPackages()
 }

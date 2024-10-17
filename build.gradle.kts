@@ -32,7 +32,7 @@ repositories {
     maven {
         url = uri("https://maven.pkg.github.com/VoidShake/Atheneum")
         credentials {
-            username = "someone"
+            username = env["GITHUB_ACTOR"]
             password = env["GITHUB_TOKEN"]
         }
         content {

@@ -20,9 +20,11 @@ object RabbitMQ : RecoveryListener, ShutdownListener {
     private lateinit var channel: Channel
 
     fun connect() {
-        AtheneumConnector.LOG.info("Connecting to RabbitMQ")
+        val factory = Config.SERVER.configureRabbitMQ()
 
-        val connection = ConnectionFactory().newConnection(Config.SERVER.rabbitMQUrl)
+        AtheneumConnector.LOG.info("Connecting to RabbitMQ at amqp://${factory.host}:${factory.port}")
+
+        val connection = factory.newConnection()
 
         connection.addShutdownListener(this)
 
@@ -64,7 +66,7 @@ object RabbitMQ : RecoveryListener, ShutdownListener {
     }
 
     override fun shutdownCompleted(exception: ShutdownSignalException) {
-        if(exception.isInitiatedByApplication) return
+        if (exception.isInitiatedByApplication) return
         AtheneumConnector.LOG.warn("RabbitMQ has shutdown, reconnecting... ({})", exception.message)
     }
 

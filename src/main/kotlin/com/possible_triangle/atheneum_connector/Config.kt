@@ -1,5 +1,6 @@
 package com.possible_triangle.atheneum_connector
 
+import com.rabbitmq.client.ConnectionFactory
 import net.minecraftforge.common.ForgeConfigSpec
 import net.minecraftforge.fml.config.ModConfig
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
@@ -31,10 +32,14 @@ object Config {
         private val rabbitmqUser = builder.define("user", "guest")
         private val rabbitmqPass = builder.define("password", "guest")
         private val rabbitmqHost = builder.define("host", "localhost")
-        private val rabbitmqPort = builder.define("port", "5672")
+        private val rabbitmqPort = builder.defineInRange("port", 5672, 0, Int.MAX_VALUE)
 
-        val rabbitMQUrl
-            get() = "amqp://${rabbitmqUser.get()}:${rabbitmqPass.get()}@${rabbitmqHost.get()}:${rabbitmqPort.get()}/"
+        fun configureRabbitMQ() = ConnectionFactory().apply {
+            username = rabbitmqUser.get()
+            password = rabbitmqPass.get()
+            host = rabbitmqHost.get()
+            port = rabbitmqPort.get()
+        }
 
         init {
             builder.pop()

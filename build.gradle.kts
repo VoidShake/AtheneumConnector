@@ -1,11 +1,14 @@
+
 import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.graphql
+import net.minecraftforge.gradle.userdev.jarjar.JarJarProjectExtension
 
 val dynmap_version: String by extra
 val rabbitmq_version: String by extra
 val travelers_titles_version: String by extra
 val yungs_api_version: String by extra
 val graphql_client_version: String by extra
+val ktor_client_version: String by extra
 val kotlin_forge_version: String by extra
 val atheneum_version: String by extra
 
@@ -46,6 +49,8 @@ configurations.named("minecraftLibrary") {
     exclude(group = "org.jetbrains", module = "annotations")
 }
 
+val jarJar = the<JarJarProjectExtension>()
+
 dependencies {
     modImplementation("maven.modrinth:travelers-titles:${travelers_titles_version}")
     modRuntimeOnly("maven.modrinth:yungs-api:${yungs_api_version}")
@@ -55,6 +60,20 @@ dependencies {
     implementation("thedarkcolour:kffmod:${kotlin_forge_version}")
     implementation("thedarkcolour:kfflang:${kotlin_forge_version}")
     implementation("thedarkcolour:kfflib:${kotlin_forge_version}")
+
+    fun pin(dependency: String) {
+        add("jarJar", dependency) {
+            jarJar.ranged(this, "[${version},)")
+        }
+    }
+
+    pin("com.expediagroup:graphql-kotlin-client:$graphql_client_version")
+    pin("com.expediagroup:graphql-kotlin-client-serialization:$graphql_client_version")
+    pin("com.expediagroup:graphql-kotlin-client-serialization:$graphql_client_version")
+    pin("io.ktor:ktor-utils-jvm:$ktor_client_version")
+    pin("io.ktor:ktor-client-core-jvm:$ktor_client_version")
+    pin("io.ktor:ktor-client-cio-jvm:$ktor_client_version")
+    pin("io.ktor:ktor-client-serialization-jvm:$ktor_client_version")
 
     //add("minecraftLibrary", "org.jetbrains.kotlin:kotlin-reflect:${kotlin.coreLibrariesVersion}")
 }

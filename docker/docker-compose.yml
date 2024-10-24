@@ -3,6 +3,7 @@ name: atheneum-connector
 services:
   mc:
     image: itzg/minecraft-server
+    container_name: atheneum-connector
     tty: true
     stdin_open: true
     ports:
@@ -14,7 +15,13 @@ services:
       MODRINTH_PROJECTS: kotlin-for-forge
     volumes:
       - data:/data
-      - ./build/libs:/mods
+      - ./config:/config
+      - ./mods:/mods
 
 volumes:
   data:
+
+networks:
+  default:
+    name: atheneum_default
+    external: true

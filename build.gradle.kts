@@ -3,6 +3,8 @@ import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.graphql
 import net.minecraftforge.gradle.userdev.jarjar.JarJarProjectExtension
 
+val mod_id: String by extra
+val mod_version: String by extra
 val dynmap_version: String by extra
 val rabbitmq_version: String by extra
 val travelers_titles_version: String by extra
@@ -74,6 +76,12 @@ dependencies {
     pin("io.ktor:ktor-client-core-jvm:$ktor_client_version")
     pin("io.ktor:ktor-client-cio-jvm:$ktor_client_version")
     pin("io.ktor:ktor-client-serialization-jvm:$ktor_client_version")
+    pin("io.ktor:ktor-network-jvm:$ktor_client_version")
+    pin("io.ktor:ktor-network-tls-jvm:$ktor_client_version")
+    pin("io.ktor:ktor-events-jvm:$ktor_client_version")
+    pin("io.ktor:ktor-utils-jvm:$ktor_client_version")
+    pin("io.ktor:ktor-io-jvm:$ktor_client_version")
+    pin("io.ktor:ktor-http-jvm:$ktor_client_version")
 
     //add("minecraftLibrary", "org.jetbrains.kotlin:kotlin-reflect:${kotlin.coreLibrariesVersion}")
 }
@@ -96,6 +104,19 @@ enablePublishing {
 
 uploadToModrinth {
     syncBodyFromReadme()
+}
+
+val copy = task<Copy>("copyBuild") {
+    group = "build"
+
+    from("build/libs/${mod_id}-${mod_version}.jar")
+    into("docker/mods")
+
+    dependsOn("jarJar")
+}
+
+tasks.build {
+    dependsOn(copy)
 }
 
 enableSonarQube()

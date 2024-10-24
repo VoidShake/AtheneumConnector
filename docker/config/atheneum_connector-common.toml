@@ -1,0 +1,10 @@
+
+[rabbitmq]
+	user = "guest"
+	password = "guest"
+	host = "rabbitmq"
+	port = "5672"
+
+[grapql]
+	url = "http://localhost:8080/api/graphql"
+

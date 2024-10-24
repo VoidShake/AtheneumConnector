@@ -82,6 +82,7 @@ dependencies {
     pin("io.ktor:ktor-utils-jvm:$ktor_client_version")
     pin("io.ktor:ktor-io-jvm:$ktor_client_version")
     pin("io.ktor:ktor-http-jvm:$ktor_client_version")
+    pin("io.ktor:ktor-http-cio-jvm:$ktor_client_version")
 
     //add("minecraftLibrary", "org.jetbrains.kotlin:kotlin-reflect:${kotlin.coreLibrariesVersion}")
 }
